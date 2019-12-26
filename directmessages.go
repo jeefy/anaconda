@@ -7,19 +7,19 @@ import (
 
 func (a TwitterApi) GetDirectMessages(v url.Values) (messages []DirectMessage, err error) {
 	response_ch := make(chan response)
-	a.queryQueue <- query{a.baseUrl + "/direct_messages.json", v, &messages, _GET, response_ch}
+	a.queryQueue <- query{a.baseUrl + "/direct_messages/events/list.json", v, &messages, _GET, response_ch}
 	return messages, (<-response_ch).err
 }
 
 func (a TwitterApi) GetDirectMessagesSent(v url.Values) (messages []DirectMessage, err error) {
 	response_ch := make(chan response)
-	a.queryQueue <- query{a.baseUrl + "/direct_messages/sent.json", v, &messages, _GET, response_ch}
+	a.queryQueue <- query{a.baseUrl + "/direct_messages/events/sent.json", v, &messages, _GET, response_ch}
 	return messages, (<-response_ch).err
 }
 
 func (a TwitterApi) GetDirectMessagesShow(v url.Values) (message DirectMessage, err error) {
 	response_ch := make(chan response)
-	a.queryQueue <- query{a.baseUrl + "/direct_messages/show.json", v, &message, _GET, response_ch}
+	a.queryQueue <- query{a.baseUrl + "/direct_messages/events/show.json", v, &message, _GET, response_ch}
 	return message, (<-response_ch).err
 }
 
@@ -46,13 +46,13 @@ func (a TwitterApi) DeleteDirectMessage(id int64, includeEntities bool) (message
 	v.Set("id", strconv.FormatInt(id, 10))
 	v.Set("include_entities", strconv.FormatBool(includeEntities))
 	response_ch := make(chan response)
-	a.queryQueue <- query{a.baseUrl + "/direct_messages/destroy.json", v, &message, _POST, response_ch}
+	a.queryQueue <- query{a.baseUrl + "/direct_messages/events/destroy.json", v, &message, _POST, response_ch}
 	return message, (<-response_ch).err
 }
 
 func (a TwitterApi) postDirectMessagesImpl(v url.Values) (message DirectMessage, err error) {
 	response_ch := make(chan response)
-	a.queryQueue <- query{a.baseUrl + "/direct_messages/new.json", v, &message, _POST, response_ch}
+	a.queryQueue <- query{a.baseUrl + "/direct_messages/events/new.json", v, &message, _POST, response_ch}
 	return message, (<-response_ch).err
 }
 
@@ -62,6 +62,6 @@ func (a TwitterApi) IndicateTyping(id int64) (err error) {
 	v := url.Values{}
 	v.Set("recipient_id", strconv.FormatInt(id, 10))
 	response_ch := make(chan response)
-	a.queryQueue <- query{a.baseUrl + "/direct_messages/indicate_typing.json", v, nil, _POST, response_ch}
+	a.queryQueue <- query{a.baseUrl + "/direct_messages/events/indicate_typing.json", v, nil, _POST, response_ch}
 	return (<-response_ch).err
 }
